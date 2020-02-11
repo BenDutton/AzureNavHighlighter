@@ -1,20 +1,18 @@
 // ==UserScript==
-// @name         Azure
-// @namespace    http://tampermonkey.net/
-// @version      0.1
-// @description  try to take over the world!
-// @author       Me
-// @match      https://*.portal.azure.com/*
-// @run-at       document-end
+// @name         Azure Nav Highlighter
+// @namespace    https://github.com/BenDutton/AzureNavHighlighter
+// @version      1.0.0
+// @description  Highlight the Azure nav bar based off the current environment
+// @author       Benjamin Dutton
+// @match        https://*.portal.azure.com/*
 // @grant        none
+// @run-at       document-end
 // ==/UserScript==
 
 function updateTopBar() {
     let topBar = document.getElementsByClassName("fxs-topbar")[0];
     const tenant = document.getElementsByClassName("fxs-avatarmenu-tenant")[0].textContent;
     const username = document.getElementsByClassName("fxs-avatarmenu-username")[0].textContent;
-
-    console.log(tenant,username);
 
     topBar.style.background = `linear-gradient(90deg, ${stringToRGB(tenant)}, ${stringToRGB(username)})`
 }
@@ -38,7 +36,6 @@ function stringToRGB(str) {
 
 let done = false;
 function waitCycle(){
-    console.log('wait');
     if (done)
         return;
     else if (
@@ -47,11 +44,9 @@ function waitCycle(){
         document.getElementsByClassName("fxs-avatarmenu-tenant")[0].textContent.length > 0 &&
         document.getElementsByClassName("fxs-avatarmenu-username")[0].textContent.length > 0
     ){
-        console.log(document.getElementsByClassName("fxs-avatarmenu-tenant")[0].textContent.length,document.getElementsByClassName("fxs-avatarmenu-username")[0].textContent.length);
         updateTopBar();
         done = true;
     } else {
-        console.log('ASD');
         setTimeout(waitCycle,100);
         return;
     }
