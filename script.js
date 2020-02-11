@@ -14,7 +14,7 @@ function updateTopBar() {
     const tenant = document.getElementsByClassName("fxs-avatarmenu-tenant")[0].textContent;
     const username = document.getElementsByClassName("fxs-avatarmenu-username")[0].textContent;
 
-    topBar.style.background = `linear-gradient(90deg, ${stringToRGB(tenant)}, ${stringToRGB(username)})`
+    topBar.style.background = `linear-gradient(90deg, ${stringToRGB(username)}, ${stringToRGB(tenant)})`
 }
 
 function stringToRGB(str) {
