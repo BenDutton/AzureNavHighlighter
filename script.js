@@ -5,7 +5,8 @@
 // @description  Highlight the Azure nav bar based off the current environment
 // @author       Benjamin Dutton
 // @match        https://*.portal.azure.com/*
-// @grant        none
+// @grant        GM_xmlhttpRequest
+// @connect      api.khushquotes.com
 // @run-at       document-end
 // ==/UserScript==
 
@@ -15,6 +16,16 @@ function updateTopBar() {
     const username = document.getElementsByClassName("fxs-avatarmenu-username")[0].textContent;
 
     topBar.style.background = `linear-gradient(90deg, ${stringToRGB(username)}, ${stringToRGB(tenant)})`
+
+    GM_xmlhttpRequest({
+    method: "GET",
+    url: "https://api.khushquotes.com/quote",
+    responseType : "json",
+    onload: function(response) {
+      console.log(response.response);
+      document.getElementsByClassName("azc-input")[0].placeholder = `"${response.response.data.quote}" - ${response.response.data.author}`
+    }
+    });
 }
 
 function stringToRGB(str) {
