@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Azure Nav Highlighter
 // @namespace    https://github.com/BenDutton/AzureNavHighlighter
-// @version      1.1.0
+// @version      1.2.0
 // @description  Highlight the Azure nav bar based off the current environment
 // @author       Benjamin Dutton
 // @match        https://*.portal.azure.com/*
@@ -11,47 +11,51 @@
 // @run-at       document-end
 // ==/UserScript==
 
-function updateTopBar() {
-    let topBar = document.getElementsByClassName("fxs-topbar")[0];
-    const tenant = document.getElementsByClassName("fxs-avatarmenu-tenant")[0].textContent;
-    const username = document.getElementsByClassName("fxs-avatarmenu-username")[0].textContent;
+(function () {
+    "use strict";
 
-    topBar.style.background = `linear-gradient(90deg, ${stringToRGB(username)}, ${stringToRGB(tenant)})`
-}
+    const SELECTORS = {
+        topBar: ".fxs-topbar",
+        tenant: ".fxs-avatarmenu-tenant",
+        username: ".fxs-avatarmenu-username",
+    };
 
-function stringToRGB(str) {
+    const POLL_INTERVAL_MS = 100;
 
-    function intToRGB(i){
-        var c = (i & 0x00FFFFFF)
-        .toString(16)
-        .toUpperCase();
-
-        return "00000".substring(0, 6 - c.length) + c;
+    function intToColorHex(num) {
+        const hex = (num & 0x00ffffff).toString(16).toUpperCase();
+        return hex.padStart(6, "0");
     }
 
-    var hash = 0;
-    for (var i = 0; i < str.length; i++) {
-       hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    function stringToRGB(str) {
+        let hash = 0;
+        for (const char of str) {
+            hash = char.charCodeAt(0) + ((hash << 5) - hash);
+        }
+        return `#${intToColorHex(hash)}`;
     }
-    return `#${intToRGB(hash)}`;
-}
 
-let done = false;
-function waitCycle(){
-    if (done)
-        return;
-    else if (
-        document.getElementsByClassName("fxs-avatarmenu-tenant").length > 0 &&
-        document.getElementsByClassName("fxs-avatarmenu-username").length > 0 &&
-        document.getElementsByClassName("fxs-avatarmenu-tenant")[0].textContent.length > 0 &&
-        document.getElementsByClassName("fxs-avatarmenu-username")[0].textContent.length > 0
-    ){
-        updateTopBar();
-        done = true;
-    } else {
-        setTimeout(waitCycle,100);
-        return;
+    function getElementText(selector) {
+        const element = document.querySelector(selector);
+        return element?.textContent ?? "";
     }
-}
 
-waitCycle();
+    function updateTopBar(tenant, username) {
+        const topBar = document.querySelector(SELECTORS.topBar);
+        if (topBar) {
+            topBar.style.background = `linear-gradient(90deg, ${stringToRGB(username)}, ${stringToRGB(tenant)})`;
+        }
+    }
+
+    function waitForElements() {
+        const tenant = getElementText(SELECTORS.tenant);
+        const username = getElementText(SELECTORS.username);
+        if (tenant.length > 0 && username.length > 0) {
+            updateTopBar(tenant, username);
+        } else {
+            setTimeout(waitForElements, POLL_INTERVAL_MS);
+        }
+    }
+
+    waitForElements();
+})();
