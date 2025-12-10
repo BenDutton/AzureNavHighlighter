@@ -22,7 +22,7 @@
 
     const POLL_INTERVAL_MS = 100;
 
-    function intToHex(num) {
+    function intToColorHex(num) {
         const hex = (num & 0x00ffffff).toString(16).toUpperCase();
         return hex.padStart(6, "0");
     }
@@ -32,7 +32,7 @@
         for (const char of str) {
             hash = char.charCodeAt(0) + ((hash << 5) - hash);
         }
-        return `#${intToHex(hash)}`;
+        return `#${intToColorHex(hash)}`;
     }
 
     function getElementText(selector) {
