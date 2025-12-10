@@ -40,26 +40,18 @@
         return element?.textContent ?? "";
     }
 
-    function updateTopBar() {
+    function updateTopBar(tenant, username) {
         const topBar = document.querySelector(SELECTORS.topBar);
-        const tenant = getElementText(SELECTORS.tenant);
-        const username = getElementText(SELECTORS.username);
-
         if (topBar) {
             topBar.style.background = `linear-gradient(90deg, ${stringToRGB(username)}, ${stringToRGB(tenant)})`;
         }
     }
 
-    function areElementsReady() {
-        return (
-            getElementText(SELECTORS.tenant).length > 0 &&
-            getElementText(SELECTORS.username).length > 0
-        );
-    }
-
     function waitForElements() {
-        if (areElementsReady()) {
-            updateTopBar();
+        const tenant = getElementText(SELECTORS.tenant);
+        const username = getElementText(SELECTORS.username);
+        if (tenant.length > 0 && username.length > 0) {
+            updateTopBar(tenant, username);
         } else {
             setTimeout(waitForElements, POLL_INTERVAL_MS);
         }
